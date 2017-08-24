@@ -1,0 +1,7 @@
+CharLinkedList by Annamira O’Toole
+The purpose of my program is to implement the doubly linked list data structure
+CharLinkedList.h declares the class and its functions
+CharLinkedList.cpp implements the functions declared in CharLinkedList.h
+testCharLinkedList.cpp contains some functions that use the functions in CharLinkedList.cpp, so that the user may play with doubly linked lists but does not contain actual unit tests…
+A doubly linked list is a linked data structure that consists of sequentially linked nodes. Each node contains two fields, called links, that are references to the previous and to the next node in the sequence of nodes, and a char value.
+A doubly linked list is very easily expandable, compared to an array.  However, it is difficult to access an element in the middle of the list without iterating through each node.

@@ -1,0 +1,198 @@
+// CharSequence.cpp
+
+// Annamira O'Toole 9/13/16
+
+#include <iostream>
+#include <string>
+
+#include "CharSequence.h"
+
+using namespace std;
+
+CharSequence::CharSequence()
+{
+    charArray = new char[INIT_CAPACITY];
+    capacity = INIT_CAPACITY;
+    count = 0;  
+}
+
+CharSequence::CharSequence(char c)
+{
+    charArray = new char[INIT_CAPACITY];
+    capacity = INIT_CAPACITY;
+    count = 1;
+    charArray[0] = c;
+  
+}
+
+CharSequence::~CharSequence(){
+    if (charArray != NULL) {
+        delete [] charArray;
+        charArray = NULL;
+    }
+}
+
+bool CharSequence::isEmpty()
+{
+    if (count == 0)
+        return true;
+    else 
+        return false;
+}
+
+
+void CharSequence::clear(){
+    count = 0;
+}
+
+int CharSequence::size(){
+    return count;
+}
+
+void CharSequence::concatenate(CharSequence *p){
+    //TODO: expand array, copy old elements, copy new elements
+    capacity = count + p->count;  //increases capacity                                                                                                                                                                     
+    char *hold =  new char[count + p->count];  // creates new and larger array                                                                    
+    for (int i = 0; i < count; i++){  //copy first count element to new array                                                                                                                             
+        hold[i] = charArray[i];
+    }
+    for (int i = count; i < count + p->count; i++){  //copy new elements
+        hold[i] = p->charArray[i - count];
+    }
+    delete [] charArray; //deallocating contents of charArray                                                                                                                                             
+    charArray = hold;  //sets intstance variable charArray to new and larger array                                                                                                                        
+    hold = NULL;
+    count = count + p->count;
+}
+
+char CharSequence::first(){
+    if(isEmpty())
+        throw 0;
+    else
+        return charArray[0];
+}
+
+char CharSequence::last(){
+    if(isEmpty())
+        throw 0;
+    else
+        return charArray[count - 1];
+}
+
+char CharSequence::elementAt(int index){
+    if (index >= count)
+        throw 0;
+    else  
+        return charArray[index];
+}
+
+void CharSequence::print(){
+    //TODO
+    cout << "[CharSequence of size " << count << " <<";
+    for (int i = 0; i < count; i++) {
+        cout << charArray[i];
+    }
+    cout << ">>]" << endl;
+}
+
+void CharSequence::insertAtBack(char c){
+    if (capacity > count)
+        charArray[count] = c;
+    else{
+        //TODO FROM LAB 1
+        if (capacity == count){
+            capacity++;  //increases capacity                                                                                                                                      
+            char *hold =  new char[capacity];  // creates new and larger array                                                                                                                          
+            for (int i = 0; i < count; i++){  //copy first count element to new array                                                                                                                 
+                hold[i] = charArray[i];
+            }
+            delete [] charArray; //deallocating contents of charArray                                                                                                                                         
+            charArray = hold;  //sets intstance variable charArray to new and larger array                                                                                                                    
+            hold = NULL;
+        }
+    }
+    charArray[count] = c; //adds new char                                                                                                                                  
+    count++;
+}
+
+void CharSequence::insertAtFront(char c){
+    //TODO: expand if needed, shift, add first char
+    if (count >= capacity){
+        capacity++;  //increases capacity                                                                                                                                                                     
+        char *hold =  new char[capacity];  // creates new and larger array                                                                                                                                    
+        for (int i = 0; i < count; i++){  //copy and shifts elements to new array                                                                                                                             
+            hold[i + 1] = charArray[i];
+        }
+        delete [] charArray; //deallocating contents of charArray                                                                                                                                             
+        charArray = hold;  //sets intstance variable charArray to new and larger array                                                                                                                        
+        hold = NULL;
+    }
+    else{
+        for (int i = count; i > 0; i--){  //shifts elements in array                                                                                                                              
+            charArray[i] = charArray[i - 1];
+        }
+    }
+    charArray[0] = c;
+    count++;
+}
+
+void CharSequence::insertAt(char c, int index){
+    //TODO: expand if needed, copy, add c, copy second half
+    //if not needed, shift second half and then set value
+  
+    if (index > count)
+        throw 0;
+    if (count >= capacity){
+        capacity++;  //increases capacity                                                                                                                                                                      
+        char *hold =  new char[capacity];  // creates new and larger array
+        for (int i = 0; i < index; i++){  //copies elements up to index
+            hold[i] = charArray[i];    
+        }                                                                                                          
+        for (int i = index + 1; i <= count; i++){  //copy and shifts elements to new array                                               
+            hold[i] = charArray[i - 1];
+        }
+        delete [] charArray; //deallocating contents of charArray                                                                                                                                              
+        charArray = hold;  //sets intstance variable charArray to new and larger array                                                                                                                         
+        hold = NULL;
+    }
+    else{
+        for (int i = count; i > index; i--){  //shifts elements in array
+            charArray[i] = charArray[i - 1];
+        }
+        
+    }
+    charArray[index] = c;
+    count++;
+}
+
+void CharSequence::removeFromFront(){  
+    if(isEmpty())
+        throw 0;
+    for (int i = 0; i < count - 1; i++){
+        charArray[i] = charArray[i + 1];
+    }
+    count--;
+}
+
+void CharSequence::removeFromBack(){
+    if(isEmpty())
+        throw 0;
+    count--;
+}
+
+void CharSequence::removeFrom(int index){
+    //TODO
+    if (index > count)
+        throw 0;
+    for (int i = index; i < count - 1; i++){
+        charArray[i] = charArray[i + 1];
+    }
+    count--;
+}
+
+void CharSequence::replace(char c, int index){
+    if (index > count)
+        throw 0;
+    charArray[index] = c;
+}
+

@@ -1,0 +1,41 @@
+// Comp 15, HW4, BSTTesting.cpp
+
+// Annamira O'Toole
+
+#include "StringBST.h"
+
+void testPrint();
+void testAdd();
+
+int main()
+{
+
+    testAdd();
+    return 1;
+
+}
+
+void testPrint(){
+    string arr[] = {"B", "A", "C"};
+    StringBST T = StringBST(arr, 3);
+    T.print();
+}
+
+void testAdd(){
+    string arr[] = {"B", "A", "C"};
+    StringBST T = StringBST(arr, 3);
+   
+    T.add("B");
+
+    T.print();
+
+}
+
+void testRemove(){
+    string arr[] = {"B", "A", "C"};
+    StringBST T = StringBST(arr, 3);
+    
+    T.add("B");
+    //T.remove("B");
+    T.print();
+}

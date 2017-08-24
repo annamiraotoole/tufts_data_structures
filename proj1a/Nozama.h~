@@ -1,0 +1,51 @@
+// Nozama.h, Project 1a, Comp 15
+
+// Annamira O'Toole 10/3/16
+
+// Nozama contains project 1's main function that simulates the warehouse.  Among other things (not completely figured out yet) it
+// calls the increment_time function, which takes every necessary action every time the "clock" variable is increased. increment_time takes
+// in an int value of the correct next packer to be used.  I am considering making seperate classes for the fetchers 
+// and packers, and my implementation of project 1 could change.
+
+#ifndef NOZAMA_H
+#define NOZAMA_H
+
+#include "Parser.h"
+#include "Orderqueue.h"
+#include <iostream>
+#include <stdexcept>
+#include <cstdio>
+
+using namespace std;
+
+class Nozama {
+
+ public:
+
+    Nozama();
+    Nozama(int numOfPackers, string algorithimName, string inputFileName);
+    ~Nozama();
+
+    //    void main(); // main function, contains a while loop that calls increment_time every time  (among other stuff)
+
+ private:
+
+    int clock; // keeps track of time passed, value is changed by the main functions as they work
+    Orderqueue [] fetchers; // queue of items left to be fetched, initialized with size 1
+    Orderqueue [] packers; // array of queues containing items to be packed, initialized with size input from command line
+    Orderqueue orders; // queue containing all the input orders from input order file
+    
+    // the next functions return the index of the next packer to be used depending on which algorithim the client requested
+    int next_fewest_items();
+    int next_shortest_time();
+    int next_round_robin();
+    int next_one_packer(); // returns 0, the index of the only packer in the array "packers"
+    
+    void increment_time(int packerNum); // increments time correctly, and carries out the actions/events
+                                        // that need to happen at that new timestamp
+  
+    void print_next_order(int packerNum); // prints to cout the information for the next order when it leaves the warehouse
+
+};
+
+#endif

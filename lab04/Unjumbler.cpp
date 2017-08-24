@@ -1,0 +1,362 @@
+/*
+ * Unjumbler.cpp
+ *
+ * Author:  Mark A. Sheldon, Tufts University, Fall 2016
+ *          based on an original solution from Mitchell Katz
+ */
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <vector>
+#include <stdexcept>
+
+#include "Unjumbler.h"
+#include "StringList.h"
+#include "string_utils.h"
+
+/*
+ * A macro to make calling the static member function 
+ * StringList::stringsToList easier.
+ * 
+ * I wish you could use "using" for this, but apparently
+ * you can't.
+ */
+#define stringsToList StringList::stringsToList
+
+using namespace std;
+
+/*
+ * Default constructor loads the words list from the file "words.txt"
+ */
+Unjumbler::Unjumbler()
+{
+        initWordsFromFile("words.text");
+}
+
+/*
+ * Constructor that lets caller tell us what words file to use.
+ */
+Unjumbler::Unjumbler(string wordsFileName)
+{
+        initWordsFromFile(wordsFileName);
+}
+
+/*
+ * Read in the words from the given words file.
+ *
+ * We assume the words file contains one a series of whitespace
+ * separated words.
+ *
+ * Throws an exception if the named file cannot be opened.
+ */
+void Unjumbler::initWordsFromFile(string filename)
+{
+        ifstream infile(filename);
+        string   s;
+
+        if (not infile.is_open())
+                throw runtime_error("Unable to open file:  " + filename);
+
+        for (infile >> s; not infile.eof(); infile >> s)
+                words.push_back(s);
+}
+
+/*
+ * Return true if the string s is a word in the dictionary
+ * and false otherwise.
+ *
+ * This uses a newer kind of for loop that you may not have seen.
+ * You can read it "for each string word in words..."
+ * The for loop will run for each element in words and run the body 
+ * with the variable "word" set to the current element.
+ */
+bool Unjumbler::isWord(string s)
+{
+        for (string &word : words)
+                if (word == s)
+                        return true;
+        return false;
+}
+
+/*
+ * Return a list consisting of the elements of the words that are not
+ * equal to s.
+ *
+ * Example:  remove("you", []) returns []
+ *           remove("you", ["me", "them"]) returns ["me", "them"]
+ *           remove("I", ["I", "said", "I", "would"])
+ *                returns ["said", "would"]
+ */
+StringList *Unjumbler::remove(string s, StringList *words)
+{
+        // TODO
+    if (isEmpty()){
+        return empty();
+    } else {
+        StringList restAnswer = remove(string s, words->rest);
+        if (words->first == s){
+            return restAnswer;
+        } else {
+            return prepend(s, restAnswer);
+    }
+}
+
+/*
+ * A test function for the remove() function above.
+ */
+bool Unjumbler::test_remove()
+{
+        // TODO
+    StringList *nothing = StringList::empty();      // The list []
+    StringList *one     = nothing->prepend("one");  // The list ["one"]
+    StringList *two     = one->prepend("two");      // The list ["two", "one"]
+    StringList result = remove("one", two):
+    if (two.oneWord() == "two")
+        return true;
+    else 
+        return false;
+}
+
+/*
+ * Return a list containing only the unique elements of lst, i. e., 
+ * a list containing elements of lst without any duplicates.
+ *
+ * Example:  removeDuplicates(["I", "said", "I", "would"])
+ *                   returns ["I", "said", "would"]
+ *           remove_duplicates(["one", "two"]) returns ["one", "two"]
+ */
+StringList *Unjumbler::removeDuplicates(StringList *lst)
+{
+    //if 
+
+    /*
+    StringList *temp = lst;
+    while (temp->rest != NULL){
+        lst = lst.remove(temp->rest->first, lst);
+        temp = remove(temp->rest, words->rest);
+    */
+}
+
+/*
+ * Test function for revoveDuplicates() function above.
+ */
+bool Unjumbler::test_removeDuplicates()
+{
+        // TODO
+        return false;
+}
+
+/*
+ * Return a the list that results from concatenating the string s
+ * to each element of lst in turn.
+ *
+ * Examples:  map_concat("com", ["puter", "plain", "municate", "pile"])
+ *                 returns ["computer", "complain", "communicate", "compile"]
+ *
+ *            map_concat("a ", ["cat", "horse", "cow"]) returns
+ *                 ["a cat", "a horse", "a cow"]
+ */
+StringList *Unjumbler::mapConcat(string s, StringList *lst)
+{
+        // TODO
+        return NULL;
+}
+
+/*
+ * Test function for mapConcat() function above.
+ */
+bool Unjumbler::test_mapConcat()
+{
+        // TODO
+        return false;
+}
+
+/*
+ * Return a list containing all the ways of inserting the string s1
+ * into the string s2.
+ *
+ * Example:  insertions("foo", "") returns []
+ *           insertions("a", "bcd") returns ["abcd", "bacd", "bcad", "bcda"]
+ *           insertions("*", "split") returns
+ *           ["*split", "s*plit", "sp*lit", "spl*it", "spli*t", "split*"]
+ */
+StringList *Unjumbler::insertions(string s1, string s2)
+{
+        // TODO
+        return NULL;
+}
+
+/*
+ * Test function for insertions() function above.
+ */
+bool Unjumbler::test_insertions()
+{
+        // TODO
+        return false;
+}
+
+/*
+ * Return a list containing all strings that result from inserting s
+ * at all possible positions in all the given words.
+ *
+ * Examples:  insertions_list("*", ["I", "am", "Sam"]) returns
+ *                    ["*I", "I*", "*am", "a*m", "am*", "*Sam", 
+ *                     "S*am", "Sa*m", "Sam*"]
+ *            insertions_list("a", ["bc", "cb"]) returns
+ *                    ["abc", "bac", "bca", "acb", "cab", "cba"]
+ */
+StringList *Unjumbler::insertionsList(string s, StringList *words)
+{
+        if (words->isEmpty())
+                return StringList::empty();
+        else
+                return insertions(s, words->first())
+                        ->append(insertionsList(s, words->rest()));
+}
+
+/*
+ * Return a list of all the permutations of the character in s, i. e.,
+ * a list of all ways of rearranging the characters in s.
+ *
+ * Examples:  permutations("") returns [""]
+ *            permutations("a") returns ["a"]
+ *            permutations("ab") returns ["ab", "ba"]
+ *            permutations("abc") returns 
+ *                    ["abc", "bac", "bca", "acb", "cab", "cba"]
+ *            permutations("add") returns
+ *                    ["add", "dad", "dda", "add", "dad", "dda"]
+ *
+ * Note:  Duplicate letters mean duplicate strings in list.
+ */
+StringList *Unjumbler::permutations(string s)
+{
+        if (s == "")
+                return StringList::empty()->prepend("");
+        else
+                return insertionsList(firstChar(s),
+                                      permutations(restChars(s)));
+}
+
+/*
+ * Return a list containing only the elements of words that are
+ * actually words.
+ */
+StringList *Unjumbler::filterWords(StringList *words)
+{
+        if (words->isEmpty())
+                return StringList::empty();
+
+        StringList *filteredRest = filterWords(words->rest());
+        if (isWord(words->first()))
+                return filteredRest->prepend(words->first());
+        else
+                return filteredRest;
+}
+
+/*
+ * The Big pay off!
+ *
+ * Return a list all the words that you can get by rearranging the
+ * letters of s.
+ */
+StringList *Unjumbler::unjumble(string s)
+{
+        return filterWords(removeDuplicates(permutations(s)));
+}
+
+/*
+ * Just a couple simple tests.  I did more than this by hand!
+ */
+bool Unjumbler::test_unjumble()
+{
+        return unjumble("tderso")->equals(stringsToList("strode",
+                                                        "stored",
+                                                        "sorted",
+                                                        "doters"))
+                and
+                unjumble("dda")->equals(stringsToList("dad", "add"));
+}
+
+/*
+ * Mitchell's test function:
+ *
+ * Runs a tester for each function and reports success or failure for
+ * each.
+ *
+ * This function is getting long, but you can see a pattern.  Can you think
+ * of a way to break the repeated elements into a function or two?
+ */
+void Unjumbler::test()
+{
+        bool testsPassed = true;
+        cout << "/*/*/*/*/* Testing remove function /*/*/*/*/*\n";
+        if (test_remove())
+                cout << "All remove tests passed\n";
+        else {
+                testsPassed = false;
+                cout << "remove tests failed\n";
+        }
+
+        cout << "\n/*/*/*/*/* Testing removeDuplicates function /*/*/*/*/*\n";
+        if (test_removeDuplicates())
+                cout << "All removeDuplicates tests passed\n";
+        else {
+                testsPassed = false;
+                cout << "removeDuplicates tests failed\n";
+        }
+
+        cout << "\n/*/*/*/*/* Testing mapConcat function /*/*/*/*/*\n";
+        if (test_mapConcat())
+                cout << "All mapConcat tests passed\n";
+        else {
+                testsPassed = false;
+                cout << "mapConcat tests failed\n";
+        }
+
+        cout << "\n/*/*/*/*/* Testing insertions function /*/*/*/*/*\n";
+        if (test_insertions())
+                cout << "All insertions tests passed\n";
+        else {
+                testsPassed = false;
+                cout << "insertions tests failed\n";
+        }
+
+        // TODO:  Add tests for other functions
+
+        cout << "\n/*/*/*/*/* Testing unjumble function /*/*/*/*/*\n";
+        if (test_unjumble())
+                cout << "All unjumble tests passed\n";
+        else {
+                testsPassed = false;
+                cout << "unjumble tests failed\n";
+        }
+
+        if (testsPassed)
+                cout << "\n\n/*/*/*/*/* ALL TESTS PASSED /*/*/*/*/*" << endl;
+        else
+                cout << "\n\n/*/*/*/*/* Some Tests Failed /*/*/*/*/*" << endl;
+}
+
+// /* 
+//  * Not a thorough test of the dictionary, but at least it can find one
+//  * word and one non-word.
+//  */
+// void Unjumbler::test_dictionary()
+// {
+//         cout << "banana is  word:  "
+//              << (isWord("banana") ? "yes" : "no")
+//              << endl;
+//         cout << "banoina is  word:  "
+//              << (isWord("banoina") ? "yes" : "no")
+//              << endl;
+// }
+
+
+// int main()
+// {
+//         Unjumbler u{"../files/words.text"};
+//
+//         u.test();
+//        
+//         return 0;
+// }

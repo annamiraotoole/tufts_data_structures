@@ -1,0 +1,33 @@
+CXX      = clang++
+CXXFLAGS = -g3 -Wall -Wextra -std=c++11
+LDFLAGS = -g3
+
+all: BSTTesting AlphaTesting Alphabetizer main
+
+BSTTesting: BSTTesting.o StringBST.o
+	${CXX} ${CXXFLAGS} -o BSTTesting BSTTesting.o StringBST.o
+AlphaTesting: AlphaTesting.o Alphabetizer.o StringBST.o
+	${CXX} ${CXXFLAGS} -o AlphaTesting AlphaTesting.o Alphabetizer.o StringBST.o
+Alphabetizer: Alphabetizer.o StringBST.o AlphaTesting.o
+	${CXX} ${CXXFLAGS} -o Alphabetizer Alphabetizer.o StringBST.o AlphaTesting.o
+
+main: main.o Alphabetizer.o StringBST.o
+	${CXX} ${CSSFLAGS} -o main main.o Alphabetizer.o StringBST.o
+
+main.o: main.cpp Alphabetizer.h
+
+BSTTesting.o: StringBST.h BSTTesting.cpp
+StringBST.o: StringBST.h StringBST.cpp
+
+AlphaTesting.o: Alphabetizer.h AlphaTesting.cpp
+Alphabetizer.o: Alphabetizer.h Alphabetizer.cpp StringBST.h
+ 
+clean:
+	rm -rf StringBST *.o *.dSYM
+	rm -rf Alphabetizer *.o *.dSYM
+
+
+provide:
+	provide comp15 hw4 BSTTesting.cpp AlphaTesting.cpp StringBST.h \
+ StringBST.cpp Alphabetizer.h Alphabetizer.cpp \
+ main.cpp README

@@ -1,0 +1,77 @@
+// Comp 15, Project 2 Final Submission, Gerp.h
+
+// Annamira O'Toole 11/21/16  
+
+#ifndef GERP_H_
+#define GERP_H_
+
+#include <vector>
+#include <string>
+#include <set>
+
+#include "KeyValueMap.h"
+#include "FSTree.h"
+#include "DirNode.h"
+#include "TypeDefs.h"
+
+class Gerp
+{
+
+ public:
+
+    Gerp();
+    ~Gerp();
+
+    void construct_AllPaths(string directory); // uses treeTraversal alg
+    // from Proj 2 Part 2
+
+    void construct_AllLines();
+
+    void construct_answers();
+
+    void process_file(ifstream &openFile, filenum_t num);
+
+    void setUp(string directory);
+
+    // FUNCTIONS WRITTEN FOR TESTING
+
+    void printAllPaths();
+
+    void printAllLines();
+
+    //    void printAllAnswers();
+
+    //    void printInsensitiveAnswers();
+
+    void printAnswer(word_t word); 
+
+    void printInsensitiveAnswer(word_t word);
+
+ private:
+    
+    // DATA MEMBERS
+
+    // map<word_t, answerhits_t> AllAnswers; // all case sensitive answers
+
+    // map<word_t, answerhits_t> InsensitiveAnswers; // all case insensitive
+    // answers
+
+    vector<filepath_t> AllPaths; // vector of all file paths in given 
+    // directory
+
+    vector<lineindex_t> AllLines; // vector of line indices, one for each
+    // file
+
+    // maps word found in directory to vector of hit_t structs
+    KeyValueMap AllAnswers;
+    KeyValueMap InsensitiveAnswers;
+
+    // PRIVATE MEMBER FUNCTIONS
+
+    void recursive_construct_AllPaths(DirNode *folder, string str);
+
+    string makeLowercase(string word);
+
+};
+
+#endif

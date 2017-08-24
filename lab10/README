@@ -1,0 +1,7 @@
+I'm doing this lab in order to both understand what universal polymorphism is
+and how I can practically apply it, and to avoid bad things that might 
+happen if I don't do it.
+
+I cannot figure out why the Original Sequence doesn't print out when I run
+testSequence.  I have been over it with a TA.  I don't have a way of knowing
+whether or not my code works without solving that problem :(

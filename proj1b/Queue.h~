@@ -1,0 +1,31 @@
+// Queue.h, Project 1a, Comp 15
+
+// Annamira O'Toole 10/4/16
+
+#ifndef QUEUE_H
+#define QUEUE_H
+#include "Order.h"
+
+class Queue {
+
+ public:
+
+    Queue();
+    Queue(Order input[], int size);
+    ~Queue();
+
+    bool isEmpty();
+    void clear();
+    int size();
+    double top();
+    double pop();
+    void push(double d);
+
+ private:
+
+    struct Order *start;
+    struct Order *tail;
+
+};
+
+#endif

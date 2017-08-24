@@ -1,0 +1,490 @@
+<!doctype html>
+<html>
+<head>
+  <!--<link rel="stylesheet" type="text/css" href="grade_a_page.css"> -->
+  <title>Trie Animation</title>
+  <meta charset="utf-8">
+</head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" ></script>
+<script src="speakClient.js"></script>
+<script src="/comp/15/files/speakGenerator.js"></script>
+<script type="text/javascript">
+function init(){
+
+	width=1000;
+	radius = 20;
+	trie = Trie();
+        //trie.addWord("hello");
+        //trie.addWord("balloon");
+        //trie.addWord("ball");
+        //trie.addWord("help");
+        //trie.addWord("bad");
+        //trie.addWord("bald");
+        //trie.addWord("balm");
+        //trie.addWord("head");
+}
+function speakWait(str,pauseAmount){
+	console.log("starting speakWait with string "+str);
+	if (speakWait.q == undefined) {
+		speakWait.q = []
+		speakWait.nextWordOk = true;
+	}
+	speakWait.q.push(str)
+	var myCount = 0;
+	var saidMyWord = false;
+	var speakDelay = setInterval(function(){
+		if (speakWait.nextWordOk) {
+			nextWord = speakWait.q.shift();
+			speakWait.nextWordOk = false;
+			speak(nextWord);
+			myCount++;
+			saidMyWord = true;
+		}
+		else if (myCount>=pauseAmount) {
+			clearInterval(speakDelay);
+			speakWait.nextWordOk = true;
+		}
+		else {
+			if (saidMyWord)  myCount++;
+		}
+        },100);
+}
+function startProgress(){
+        var progInd = document.createElement('img')
+        progInd.src = "smallProgress.gif";
+        document.getElementById('progressIndicator').appendChild(progInd);
+}
+
+function endProgress(){
+        progSpan = document.getElementById('progressIndicator');
+        progSpan.removeChild(progSpan.childNodes[0]);
+}
+function addClassWords(){
+        trie.addWord("fire");
+        trie.addWord("cow");
+        trie.addWord("red");
+        trie.addWord("pit");
+        trie.addWord("corn");
+        trie.addWord("sand");
+        trie.addWord("day");
+        trie.addWord("snow");
+        trie.addWord("pits");
+        trie.addWord("fish");
+        clearCanvas();
+	levelOrder(trie.root);
+}
+function drawNodes(){
+	drawNodes.r = 10;
+	drawNodes.nodeArray = new Array();
+
+	console.log("Creating nodes.");
+	
+	drawNodes.nodeArray.push(Node('a',50,50,drawNodes.r));
+	drawNodes.nodeArray.push(Node('b',200,100,drawNodes.r));
+	console.log("Drawing nodes.");
+	drawNodes.nodeArray[0].drawNode();
+	drawNodes.nodeArray[1].drawNode();
+	
+	console.log("Connecting nodes.");
+	drawEdge(drawNodes.nodeArray[0],drawNodes.nodeArray[1]);
+}
+
+function Node(letter,x,y,r){
+	var node = new Object();
+	node.letter = letter;
+	node.wordMarker = false;
+	node.children = new Array(26);
+	node.x = x;
+	node.y = y;
+	node.r = r;
+	node.drawNode = function() {
+		console.log("Drawing node");
+		console.log(node.x+","+node.y+","+node.r+","+0+","+2*Math.PI)
+		
+	        var text;
+		if (node.wordMarker) {
+			//text = node.letter+"*";
+			text = node.letter;
+			ctx.fillStyle = 'red';
+		}
+		else {
+			text = node.letter;
+		}
+		console.log(text+","+node.x+","+node.y+","+node.r/3);
+	}
+	node.highlight = function(){
+		speakWait(node.letter,7);
+		return;
+	        var c = document.getElementById("myCanvas");
+		var ctx = c.getContext("2d");
+		ctx.beginPath();
+		ctx.arc(node.x,node.y,node.r,0,2*Math.PI);
+		ctx.fillStyle = 'green';
+                ctx.fill();
+		// text
+		fontSize = node.r;
+		ctx.font = fontSize+'pt Calibri';
+	        ctx.textAlign = 'center';
+	        ctx.fillStyle = 'blue';
+	        var text;
+		if (node.wordMarker) {
+			//text = node.letter+"*";
+			text = node.letter;
+			ctx.fillStyle = 'red';
+		}
+		else {
+			text = node.letter;
+		}
+	        ctx.fillText(text, node.x, node.y+node.r/3);
+		ctx.stroke();
+		node.redrawn = false;
+		setTimeout(function() { 
+		        node.drawNode(); 
+		        node.redrawn=true;
+		        }, 500); 
+	}
+	node.setChild = function(n,c){
+		node.children[c.charCodeAt(0)-'a'.charCodeAt(0)]=n;
+	}
+	node.findChild = function(c) {
+		return node.children[c.charCodeAt(0)-'a'.charCodeAt(0)];
+	}
+	node.setWordMarker = function() {
+		node.wordMarker=true;
+	}
+	node.nodeString = function(level) {
+		var nodeStr = level+','+node.letter+','+
+		        (node.wordMarker ? '1' : '0')+'\n';
+		for (var i=0;i<node.children.length;i++) {
+		        if (node.children[i] != undefined) {
+		        	nodeStr+=node.children[i].nodeString(level+1);
+		        }
+		}
+		return nodeStr;
+	}
+	node.addPreNodes = function(preNodes,level,index) {
+		while (index != preNodes.length) { // base case
+			pn = preNodes[index];
+			if (parseInt(pn[0]) <= parseInt(level)) return index; // next sibling
+			// we have a child to add
+			tmp = Node('',0,0,r);
+			tmp.letter = pn[1];
+			if (pn[2]==1) tmp.setWordMarker();
+
+			node.setChild(tmp,pn[1]);
+			index = tmp.addPreNodes(preNodes,pn[0],index+1);
+		}
+		return index;
+	}
+	return node;
+}
+
+function Trie(r){
+        // Trie and functions were modified from
+        // http://www.sourcetricks.com/2011/06/c-tries.html
+	var trie = new Object();
+	trie.root = Node(' ',0,0,r);
+	trie.addWord = function(s){
+		trie.addingComplete = false;
+		speakWait("Adding word "+s,5);
+		$.post( "runTrie.pl", {'word':s,
+				     'function':'addWord',
+				     'currentTrie':trie.trieString()}, 
+                        function (data){
+                        	console.log(data);
+                        	if (data.indexOf("Program terminated") != -1) {
+                        		speakWait("C++ program had infinite loop!",5);
+                        		return;
+                        	}
+                        	trie.preNodes = new Array();
+                        	var preNodesPartial = data.split('\n');
+                        	for (i=0;i<preNodesPartial.length-1;i++) {
+                        		trie.preNodes.push(preNodesPartial[i].split(','))
+                        	}
+                        	trie.root.addPreNodes(trie.preNodes,0,1);
+        			//console.log(data);
+        			clearCanvas();
+				//levelOrder(trie.root);
+				text_trie(trie.root,0);
+				trie.addingComplete = true;
+    			});
+	}
+	trie.addWordOld = function(s) {
+	current = trie.root;
+		
+		if ( s.length == 0 )
+		{
+			current.setWordMarker; // an empty word
+			return;
+		}
+	
+		for ( i = 0; i < s.length; i++ )
+		{
+			child = current.findChild(s[i]);
+			if ( child != undefined )
+			{
+				current = child;
+			}
+			else
+			{
+				tmp = Node('',0,0,r);
+				tmp.letter = s[i];
+				current.setChild(tmp,s[i]);
+				current = tmp;
+			}
+			if ( i == s.length - 1 )
+				current.setWordMarker();
+		}
+	}
+	trie.searchWord = function(s){
+		speakWait("Attempting to find the word "+s+" in the trie",30);
+		$.post( "runTrie.pl", {'word':s,
+				     'function':'searchWord',
+				     'currentTrie':trie.trieString()}, 
+                        function (data){
+        			console.log(data);
+        			if (data.indexOf("Program terminated") != -1) {
+                        		speakWait("C++ program had infinite loop!",5);
+                        		return;
+                        	}
+                        	trie.searchWordOld(s);
+    			});
+	}
+	trie.searchWordOld = function(s) {
+        	current = trie.root;
+        	var i=0;           
+                var searchWordTimer = setInterval(function(){
+                
+                if (current != undefined && i < s.length) {
+                //while ( current != undefined )
+                //{
+                        //for ( i = 0; i < s.length; i++ )
+                        //{
+                        	//speak(s[i]);
+                                tmp = current.findChild(s[i]);
+                                if ( tmp == undefined ) {
+                                        trie.searchWordFound = false;
+                                        speakWait("Did not find "+s,5);
+                                        clearInterval(searchWordTimer);
+                                        return;
+                                }
+                                tmp.highlight();
+                                current = tmp;
+                        //}
+                        if (i == s.length-1) {
+                                if ( current.wordMarker == true ){
+                                        trie.searchWordFound = true;
+                                        speakWait("Found the word "+searchWord+'.',5)
+                                }
+                                else {
+                                        trie.searchWordFound = false;
+                                        speakWait("Did not find "+s,5);
+                                }
+                                clearInterval(searchWordTimer);
+                                return;
+                        }
+                        i++;
+                        return;
+                }
+                else {	
+                        console.log("current undef");
+		        trie.searchWordFound = false;
+		        speakWait("Did not find "+s,5);
+		        clearInterval(searchWordTimer);
+                        return;
+		}
+		//}
+		
+                },5);
+        }
+	trie.trieString = function(){
+		trieStr = trie.root.nodeString(0);
+		//console.log(trieStr);
+		return trieStr;
+	}	
+	return trie;
+}
+
+function nbsp_tab(count){
+	var space_count="";
+	if (count == 0) return "";
+	for (i=0;i<(count-1);i++){
+		space_count+="<td></td>";
+	}
+	
+	return space_count;
+}
+function text_trie(root,depth){
+	if (depth==0) {
+		text_trie.html ='<table border="1">\n';
+	}
+	text_trie.html += "<tr>";
+	
+	// recursively draw the trie with tabs for each level
+	// first "tab" by four spaces
+	text_trie.html += nbsp_tab(depth);
+	if (root.letter != " ") {
+		text_trie.html += "<td>"+root.letter;
+		if (root.wordMarker) {
+			text_trie.html += "*";
+		}
+		text_trie.html += "</td></tr>\n";
+	}
+	for (var i=0;i<26;i++) {
+		if (root.children[i] != undefined) {
+			text_trie(root.children[i],depth+1);
+		}
+	}
+	if (depth == 0) {
+		text_trie.html += "</table>";
+		$("#text_trie").html(text_trie.html);
+	}
+}
+function levelOrder(root){
+	return;
+        mustRedraw = true;
+        while (mustRedraw) {
+                var q = [];
+                var prevPositions = [];
+                var depth = 0;
+
+	        mustRedraw = false;
+                var nodeX = canvasWidth/2;
+                document.getElementById("scrollDiv").scrollLeft = nodeX-500;
+                // q has an array:
+                //    node, x location, depth, parent node, childrenWidth
+                q.push([root,nodeX,depth,undefined,0]);
+                while (q.length != 0) {
+                        var tmp = q.shift();
+                        theNode = tmp[0];
+                        nodeX = tmp[1];
+                        depth = tmp[2];
+                        parent = tmp[3];
+                        //console.log(theNode.letter+','+tmp[1]+','+tmp[2]+','+tmp[4]);
+                        theNode.x = nodeX;
+                        theNode.y = radius*3 * depth + radius;
+                        adjustPos(theNode,prevPositions,radius);
+                        theNode.r = radius;
+                        theNode.drawNode();
+                        prevPositions.push([theNode.x,theNode.y]);
+                        nodeX = theNode.x;
+                        if (theNode.x + radius > canvasWidth || theNode.y + radius > canvasHeight) {
+                                mustRedraw = true;
+                                if (theNode.x + radius > canvasWidth) {
+                                        ctx.canvas.width *= 2;
+                                        console.log("increasing width");
+                                }
+                                else {
+                                        ctx.canvas.height *=2;
+                                        console.log("increasing height");
+                                }
+                                break;
+                        }
+
+                        if (parent != undefined) {
+                                drawEdge(parent,theNode);
+                        }
+                        // count total children
+                        totalChildren = 0;
+                        for (var i=0;i<theNode.children.length;i++) {
+                                if (theNode.children[i] != undefined) {
+                                        totalChildren++;
+                                }
+                        }
+                        childNum=0;
+                        for (var i=0;i<theNode.children.length;i++){
+                                if (theNode.children[i] != undefined) {
+                                        // childX is middle of the total range for children
+                                        depthAllowedWidth = width/Math.pow(2,depth);
+                                        //leftMostChild = nodeX - depthAllowedWidth/2;
+                                        leftMostChild = nodeX;
+                                        childrenWidth = depthAllowedWidth/(totalChildren+1);
+                                        //if (childrenWidth < 30) {
+                                        //     childrenWidth = 30;
+                                        //}
+                                        //console.log(nodeX+','+depthAllowedWidth+','+leftMostChild+','+childrenWidth+','+totalChildren);
+                                        childX = childrenWidth * childNum + leftMostChild - (totalChildren - 1)*childrenWidth/2;
+                                        q.push([theNode.children[i],childX,
+                                                depth+1,theNode,childrenWidth]);
+                                        childNum++;
+                                }
+                        }
+                }
+        }
+	
+}
+// checks all previous positions, and if there is an overlap, ensures that the
+// node is pushed right until there isn't an overlap
+function adjustPos(theNode,prevPositions,radius){
+        for(var i=0;i<prevPositions.length;i++){
+                // first deal with nodes on the same level 
+                // that are to the right of where we want to place it
+                if (theNode.y == prevPositions[i][1] && prevPositions[i][0] > theNode.x + radius) 
+                {
+                        theNode.x = prevPositions[i][0]+radius*2+10;
+                }
+                else {
+                        // two nodes overlap if the distance between the centers is less
+                        // than the diameter
+                        overlap = Math.sqrt(Math.pow(theNode.x-prevPositions[i][0],2)+
+                                            Math.pow(theNode.y-prevPositions[i][1],2));
+                        if (overlap <= radius*2) {
+                                console.log("Overlap!");
+                                // must move right by the furthest right
+                                theNode.x = Math.max(theNode.x,prevPositions[i][0])+radius*2+10;
+                        }
+                }
+        }
+}
+function addWord(){
+	word = document.getElementById("newWord").value;
+	word = word.toLowerCase().replace(/[^a-z-]/g,"");
+	document.getElementById("newWord").value = "";
+	trie.addWord(word);
+}
+
+function searchForWord(){
+        searchWord = document.getElementById("searchWord").value;
+        searchWord = searchWord.toLowerCase().replace(/[^a-z-]/g,"");
+        // set up timer for searchWord
+        trie.searchWordFound = undefined;
+        
+        trie.searchWord(searchWord); // search for the word        
+}
+function clearCanvas(){
+	// code borrowed from http://stackoverflow.com/a/6722031/561677
+	$("#text_trie").html("");
+}
+function addList(){
+        var wordList = prompt("Please enter a comma-separated word list.").split(',');
+        if (wordList == undefined) return;
+        //startProgress();
+        var i=0;
+        trie.addWord(wordList[i]);
+	var addListTimer = setInterval(function(){
+		if (trie.addingComplete) {
+			i++;
+			if (i == wordList.length) clearInterval(addListTimer);
+			else {
+				trie.addWord(wordList[i]);
+			}
+		}
+			   },100);
+        clearCanvas();
+        text_trie(root,0);
+	//levelOrder(trie.root);
+	//endProgress();
+}
+
+</script>
+<body style="font-family:courier new;" onload="init()">
+	Add word:<input type="text" id="newWord" size=10 onchange="addWord()">
+	Search for word:<input type="text" id="searchWord" size=10 onchange="searchForWord()">
+	<input type="button" id="batchInput" value="Add a list of words" onclick="addList()">
+	<span id="progressIndicator"></span>
+	<p>
+	<span id="text_trie"></span>
+	<div id="audio"></div>
+	
+</body>
+</html>

@@ -1,0 +1,96 @@
+NOTE: when I wrote this I used "depends on" to mean "is a client of"
+
+The title of the homework and the author’s name (you)
+
+    Gerp: Project 2 Final Submission
+    Annamira O'Toole
+
+The purpose of the program
+
+    To search directories for words, and be able to do it both case sensitive
+    and insensitive.
+
+The files that you provided and a short description of what each
+ file is and its purpose
+
+ KeyValueMap.h -- .h file for my hashmap
+ KeyValueMap.cpp -- .cpp file for my hashmap
+
+ KeyValueMap maps word_t to answerhits_t (typedefs defined in TypeDefs.h)
+ it uses linear probing and the std::hash function
+ it depends on TypeDefs
+
+ Gerp.h -- .h file for gerp
+ Gerp.cpp -- .cpp file for gerp
+
+ Gerp depends on FSTree, DirNode, KeyValueMap, and TypeDefs and implements
+ all the necessary indexing functions to set up the data structures 
+ containing file, line, and word occurance information
+ deals with case sensitivity
+
+ main.cpp -- contains main function, deals with command line, creates instance
+ of Gerp and calls it's public functions
+
+ TypeDefs.h -- defines many simple typedefs and structs that are used 
+ throughout the program
+
+ TestGerp.cpp -- contains testing functions, some of which are commented out
+ because I first wrote my program with std:: <map> instead of my own hashmap
+ and degbugged it with TestGerp
+ NOTE: some of the functions TestGerp used are still in Gerp.cpp and commented
+ out
+
+ Files from course: no edits have been made
+
+ FSTree.h 
+ DirNode.h
+ FSTree.o
+ DirNode.o
+
+ README -- current file
+
+ Makefile
+
+
+How to compile and run your program
+
+    compile with "make"
+
+    run with ./gerp <name of directory to index>
+
+    when Query? is printed, type either:
+    
+    a simple string to search for (case sensitive)
+    
+    @i OR @insensitive and then a simple string to search for (case
+       insensitive)
+
+    @q OR @quit to quit program
+
+
+An "architectural overview," i. e., a description of how
+ your various program modules relate. For example, the
+ FSTree implementation keeps a pointer to the the root
+ DirNode.
+
+ TypeDefs is used by all files, and defines a lot of _t typedefs and structs
+ 
+ Gerp is the major class in this project, it uses many data structures:
+
+      hashmap: implemented by KeyValueMap and used twice to store data (two
+      KeyValueMap data members)
+
+      vector: data members vector<lineindex_t> and vector<filepath_t>, 
+      a vector of vectors (lineindex_t are vectors themselves) and a vector
+      of strings, respectively
+      
+      one of it's methods creates an FSTree to index all the file paths within
+      the user specified directory
+
+      Gerp therefore relies on (is a client of) KeyValueMap, TypeDefs,
+      and the course provided classes FSTree and DirNode
+
+ KeyValueMap is the hashmap implementation, and depends on typedefs defined in
+ TypeDefs.h, it is implemented with arrays and expands and rehashes when
+ necessary, it keeps a pointer to an array of entryp, a struct defined in 
+ KeyValueMap.h

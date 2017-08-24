@@ -1,0 +1,43 @@
+The title of the homework and the author’s name:
+
+HW4 Alphabetizer, Annamira O'Toole
+
+The purpose of the program:
+
+To alphabetize strings input via a file, or the command line, can also
+alphabetize in reverse order
+
+The files that you provided and a short description of what
+each file is and its purpose:
+
+BSTTesting.cpp used for unit testing StringBST class
+AlphaTesting.cpp used for unit testing Alphabetizer class
+StringBST.h header file for binary search tree of strings
+StringBST.cpp implementation of functions declared in StringBST.h
+Alphabetizer.h header file for alphabetizer class used by client
+Alphabetizer.cpp implementation of functions declared in Alphabetizer.h
+main.cpp a client of Alphabetizer.h, interacts with command line (contains
+main function)
+
+How to compile and run your program:
+
+for interactive mode: ./alphabetizer 
+for automated mode: ./alphabetizer <order> <filename>
+
+An outline of the data structures and algorithms that you used:
+
+data structures: binary search tree implemented by StringBST
+algorithims: recursive tree traversals
+
+StringBST::print function: in-order traversal
+StringBST::remove function: post-order traversal + calls itself when it
+shuffles tree (if node to be removed has two children)
+StringBST::add function: uses private getNode() to find spot to add string
+with pre-order traversal
+StringBST::contains function: pre-order traversal 
+
+Details and an explanation of how you tested the various parts
+of your classes and the program as a whole:
+
+Created some simple instances of StringBST, used the function to be tested,
+and then printed out the resultant tree

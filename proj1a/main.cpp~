@@ -1,0 +1,15 @@
+#ifndef MAIN_CPP
+#define MAIN_CPP
+
+#include "Nozama.h"
+#include <iostream>
+#include <stdexcept>
+#include <cstdio>
+
+using namespace std;
+
+int main() {
+
+}
+
+#endef

@@ -1,0 +1,101 @@
+// Nozama.h, Project 1b, Comp 15
+
+// Annamira O'Toole 10/10/16
+
+// Nozama contains project 1's main function that simulates the warehouse. 
+//  Among other things (not completely figured out yet) it
+// calls the increment_time function, which takes every necessary action every
+// time the "clock" variable is increased. increment_time takes
+// in an int value of the correct next packer to be used.
+
+#ifndef NOZAMA_H
+#define NOZAMA_H
+
+#include "Parser.h"
+#include "Orderqueue.h"
+#include <iostream>
+#include <stdexcept>
+#include <cstdio>
+
+using namespace std;
+
+class Nozama {
+
+ public:
+
+    Nozama();
+    Nozama(int numOfPackers, string algorithimName, string inputFileName);
+    ~Nozama();
+
+    void simulate(); // called by main function on the instance of Nozama
+                     // initialized by main
+
+    static const int maxPackers = 10;
+
+ private:
+
+
+    Nozama(const Nozama &source); // declared but undefined, I do not need 
+    //Nozamas to be copyable   
+    
+    Nozama &operator= (const Nozama &source); // declared but undefined, I do
+    // not need Nozamas to be copyable
+
+    const int FEWEST_ITEMS = 1;
+    const int SHORTEST_TIME = 2;
+    const int ROUND_ROBIN = 3;
+    const int ONE_PACKER = 0;
+
+    int algorithim;
+    
+    int clock; // keeps track of time passed, 
+    //value is changed by the main functions as they work
+    
+    int numPackers; // amount of packer units desired by client 
+    int lastPackerUsed = -1;
+    Order fetching; // item the fetcher is working on
+    
+    Orderqueue toBePacked[maxPackers]; // array of queues containing items 
+    //waiting to be packed, initialized with maxPackers
+    
+    int packerTimesLeft[maxPackers]; // array of ints containing the packing 
+    //time left for each Orderqueue in toBePacked
+    
+    Order packing[maxPackers]; // array of orders that are 
+    //currently being packed
+    
+    Orderqueue ordersLeft; // queue containing all the input orders from 
+    //input order file
+
+    int min = 1000;
+    int max = -1;
+    int numOrders = 0;
+    int timeSum = 0.0;
+
+    void read_file(string filename); // returns Orderqueue with all orders from
+    // input file, uses Parser class
+
+    // the next functions return the index of the next packer to be used 
+    //depending on which algorithim the client requested
+    int next_fewest_items();
+    int next_shortest_time();
+    int next_round_robin();
+    int next_one_packer(); // returns 0, the index of the only packer in the
+    // array "packers"
+    int next_packer(); // using the algorithim variable and next_ functions 
+    //it returns the index of next toBePacked queue to use    
+
+    bool idlePackers(); // returns true if all packer queues are empty and 
+    //nothing is currently being packed
+
+    void increment_time(); // increments time correctly, and carries out the 
+    //actions/events that need to happen at that new timestamp
+  
+    void print_order(Order order); // prints to cout the information for 
+    //the next order when it leaves the warehouse
+
+    void print_ordersLeft();
+
+};
+
+#endif

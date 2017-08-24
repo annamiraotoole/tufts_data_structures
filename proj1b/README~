@@ -1,0 +1,21 @@
+README, Project 1b, Comp 15
+
+Annamira O'Toole 10/13/16
+
+Orderqueue class: implements my queue which is a doubly linked list of OrderNode structs, relies on
+the provided Order class that implements the Order struct
+
+instance variables: start pointer to the first OrderNode in the list, tail pointer to the end
+of the list
+
+Nozama class: uses the provided Parser class to read the input file, keeps track of time with a
+function that increments time and performs the necessary actions (moving Orders around and editing
+their information within the fetcher and packers), the increment_time function will be called
+repeatedly in a while loop in the simulate function that acts as the main loop for simulating Nozama
+
+instance variables: int clock, Queue inputOrders, Queue [] fetchers, Queue[] packers, constructor
+takes in a number of packers, an input filename, and an algorithim type
+
+main.cpp:
+
+changes to Order.h: added data member int total_time

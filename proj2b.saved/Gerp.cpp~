@@ -1,0 +1,63 @@
+// Comp 15, Project 2 Final Submission, Gerp.cpp
+// Annamira O'Toole 11/23/16
+
+#include "Gerp.h"
+
+#include <iostream>
+#include <stdexcept>
+#include <cstdio>
+#include <fstream>
+
+using namespace std;
+
+lineindex_t *Gerp::process_file(ifstream &openFile) {
+
+    lineindex_t *index;
+
+    /*  where openFile has to be of type istream NOT ifstream           
+    int lineNum = 1;                                                      
+    while (! openFile.eof()) {                                 
+        try {                                                   
+            string nextLine;                                     
+            openFile >> nextLine;                                    
+            if (!openFile.fail()){                                  
+                linesInFile.insert(lineNum, nextLine);     
+                lineNum++;                                           
+            }                                                 
+        } catch (...) {                                          
+        cout << "ERROR" << endl;                                            
+        }                                                              
+    }                                       
+                                                                               
+    */
+
+    // copied from stackoverflow.com/questions/7868936/read-file-line-by-line 
+    linenum_t lineNum = 1;
+    line_t line;
+    while (getline(openFile, line)) {
+
+        istringstream iss(line);
+        line_t nextLine;
+
+        if (!(iss >> nextLine)) { break; } // error             
+
+        index->push_back(nextLine);
+
+        lineNum++;
+
+    }
+
+}
+
+void construct_AllLines() {
+
+    // for every file/filepath, process that file and add it to AllLines
+
+
+}
+
+void construct_AllPaths(string directory) {
+
+
+
+}

@@ -1,0 +1,31 @@
+// DoubleStack.h
+
+// Annamira O'Toole 9/23/16
+
+#ifndef DOUBLESTACK_H
+#define DOUBLESTACK_H
+
+class DoubleStack {
+
+ public:
+
+    DoubleStack();
+    DoubleStack(double input[], int size);
+    ~DoubleStack();
+
+    bool isEmpty();
+    void clear();
+    int size();
+    double top();
+    double pop();
+    void push(double d);
+
+ private:
+
+    struct DoubleNode { double aDouble; DoubleNode *next; DoubleNode *prev; };
+    struct DoubleNode *start;
+    struct DoubleNode *tail;
+
+};
+
+#endif

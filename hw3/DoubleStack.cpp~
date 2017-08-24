@@ -1,0 +1,108 @@
+// DoubleStack.cpp
+
+// Annamira O'Toole 9/23/16
+
+#include <iostream>
+#include <stdexcept>
+
+#include "DoubleStack.h"
+
+using namespace std;
+
+DoubleStack::DoubleStack(){
+    start = NULL;
+    tail = NULL;
+}
+
+DoubleStack::DoubleStack(double arr[], int size){
+    if (size == 0){
+        start = NULL;
+        tail = NULL;
+    }    
+    start = new DoubleNode;
+    start->aDouble = arr[0];
+    start->prev = NULL;
+    DoubleNode *temp = start;
+    for (int i = 1; i < size; i++){
+        temp->next = new DoubleNode;
+        temp->next->aDouble = arr[i];
+        temp->next->prev = temp;
+        temp->next->next = NULL;
+        temp = temp->next;
+    }
+    tail = temp;
+}
+
+DoubleStack::~DoubleStack(){
+
+}
+
+bool DoubleStack::isEmpty()
+{
+    if (start == NULL)
+        return true;
+    else
+        return false;
+}
+
+void DoubleStack::clear(){
+    while (start != NULL){
+        struct DoubleNode *temp = start->next;
+        delete start;
+        start =temp;
+    }
+    tail = NULL;
+}
+
+int DoubleStack::size(){
+    if (start == NULL)
+        return 0;
+    int count = 1;
+    struct DoubleNode *temp = start;
+    while (temp->next != NULL){
+        temp = temp->next;
+        count++;
+    }
+    return count;
+}
+
+double DoubleStack::top(){
+    if(isEmpty())
+        throw runtime_error("empty_stack");
+    else{
+        return tail->aDouble;
+    }
+}
+
+double DoubleStack::pop(){
+    if(isEmpty())
+        throw runtime_error("empty_stack");
+    else {
+        DoubleNode *temp = tail->prev;;
+        double last = tail->aDouble;
+        delete tail;
+        tail = temp;
+        if (tail == NULL)
+            start = NULL;
+        else
+            tail->next = NULL;
+        return last;
+    }
+
+}
+
+void DoubleStack::push(double d){
+    if (isEmpty()){
+        start = new struct DoubleNode;
+        start->aDouble = d;
+        start->prev = NULL;
+        start->next = NULL;
+        tail = start;
+    }else{
+        tail->next = new struct DoubleNode;
+        tail->next->aDouble = d;
+        tail->next->prev = tail;
+        tail->next->next = NULL;
+        tail = tail->next;
+    }
+}

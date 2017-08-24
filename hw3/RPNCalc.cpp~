@@ -1,0 +1,104 @@
+// RPNCalc.cpp
+
+// Annamira O'Toole 9/23/16                                                                                                                          
+
+#include <iostream>
+#include <stdexcept>
+#include <cstdio>
+#include <fstream>
+#include "RPNCalc.h"
+
+using namespace std;
+
+RPNCalc::RPNCalc(){
+    stack = DoubleStack();
+}
+
+RPNCalc::~RPNCalc(){
+    
+}
+
+void RPNCalc::clear(){
+    if (stack.size() == 0)
+        return;
+    while (stack.size() != 0)
+        stack.pop();
+}
+
+void RPNCalc::add(){
+    double a = stack.pop();
+    double b = stack.pop();
+    stack.push(a + b);
+}
+
+void RPNCalc::subtract(){
+    double a = stack.pop();
+    double b = stack.pop();
+    stack.push(a - b);
+}
+
+void RPNCalc::multiply(){
+    double a = stack.pop();
+    double b = stack.pop();
+    stack.push(a * b);
+}
+
+void RPNCalc::divide(){
+    double a = stack.pop();
+    double b = stack.pop();
+    stack.push(a / b);
+}
+
+void RPNCalc::print(){
+    cout << stack.top() <<endl;
+}
+
+bool got_double(string s, double *resultp)
+{
+    return sscanf(s.c_str(), "%lf", resultp) == 1;
+}
+
+/*void read_from_file(istream &input)
+{                                                                                             
+    for (input >> s; not input.eof(); input >> s)
+        cin << s << endl;
+}*/
+
+void RPNCalc::runStream(istream &myStream){
+    while (! myStream.eof()) {
+        double n;
+        string s;
+        myStream >> s;
+        if (s == "p") {
+            print();
+        } else if (got_double(s, &n)) { // use got_double from Mark's file got_double.cpp
+            stack.push(n);            
+        } else if (s == "c" || s == "C") {
+            clear();
+        } else if (s == "f" || s == "F") { // use Mark's file reading code
+            string filename;
+            ifstream input;
+            myStream >> filename;
+            input.open(filename.c_str());
+            runStream(input);
+            input.close();
+        } else if (s == "q" || s == "Q") {
+            return;
+        } else if (s == "+") {
+            add();
+        } else if (s == "-") {
+            subtract();
+        } else if (s == "*") {
+            multiply();
+        } else if (s == "/") {
+            divide();
+        } else {
+            cout << s << ":  unimplemented" << endl;
+        }
+ 
+    }
+}
+
+void RPNCalc::run(){
+    runStream(cin);
+}

@@ -1,0 +1,17 @@
+Homework 3, Comp 15: Reverse Polish Notation Calculator
+Annamira O'Toole 9/27/2016
+Purpose of program: to create a reverse polish notation calculator similar to the built in Unix dc calculator
+Files provided:
+      DoubleStack.h: declares a class called DoubleStack, which implements a doubly linked list
+      last-in-first-out style stack 
+      DoubleStack.cpp: implements both the public and private functions of DoubleStack
+      RPNCalc.h: declares a class called RPNCalc, which creates a reverse polish notation calculator
+      that uses DoubleStack to implement its list of input values 
+      RPNCalc.cpp: implements both the public and private functions of RPNCalc
+How to compile: ????
+
+I used doubly linked lists to implement the last-in-first-out style RPN calculator
+Doubly linked lists are more easily expanded in size than arrays and each element in
+the list has access to the element before, an important feature for the functionality of 
+the RPNCalc class, since each command (+ - * /) requires the last two inputted values
+as opposed to only the tail end of the stack
